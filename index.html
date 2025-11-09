@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSINT Hunter | Ultimate OSINT Toolkit</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0f1a30;
+            --secondary: #1e3a8a;
+            --accent: #ff6b6b;
+            --light: #e2e8f0;
+            --dark: #0a1128;
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --purple: #8b5cf6;
+            --cyan: #22d3ee;
+            --gradient: linear-gradient(135deg, #1e3a8a, #0f1a30);
+            --gradient-accent: linear-gradient(135deg, #ff6b6b, #8b5cf6);
+            --card-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            --hover-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Enhanced Space Background */
+        .space-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle 5s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .comet {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.5);
+            animation: comet 15s linear infinite;
+        }
+
+        @keyframes comet {
+            0% {
+                transform: translate(0, 0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-1000px, 1000px);
+                opacity: 0;
+            }
+        }
+
+        .nebula {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.2) 0%, rgba(139, 92, 246, 0) 70%);
+            filter: blur(40px);
+            animation: float 20s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(50px, 30px) scale(1.1); }
+            50% { transform: translate(30px, 50px) scale(0.9); }
+            75% { transform: translate(-20px, 20px) scale(1.05); }
+        }
+
+        /* Header Styles */
+        header {
+            background: rgba(15, 26, 48, 0.9);
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-accent);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo i {
+            color: var(--accent);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 5px 10px;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 6rem 0 5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .main-logo {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: var(--gradient-accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.5);
+            animation: logoGlow 3s ease-in-out infinite alternate;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-logo::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        .main-logo i {
+            font-size: 5rem;
+            color: white;
+            z-index: 1;
+        }
+
+        @keyframes logoGlow {
+            from {
+                box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+            }
+            to {
+                box-shadow: 0 0 40px rgba(34, 211, 238, 0.8), 0 0 60px rgba(139, 92, 246, 0.6);
+            }
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, #ff6b6b, #8b5cf6, #22d3ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textGlow 3s ease-in-out infinite alternate;
+            position: relative;
+            overflow: hidden;
+            min-height: 1.2em;
+        }
+
+        .hero h1::after {
+            content: '|';
+            position: absolute;
+            right: 0;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        @keyframes textGlow {
+            from {
+                text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+            }
+            to {
+                text-shadow: 0 0 20px rgba(34, 211, 238, 0.8), 0 0 30px rgba(139, 92, 246, 0.6);
+            }
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease;
+        }
+
+        /* Categories Section */
+        .categories {
+            padding: 5rem 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-title h2 {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+            background: linear-gradient(to right, #ff6b6b, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            overflow: hidden;
+            min-height: 1.2em;
+        }
+
+        .section-title h2::after {
+            content: '|';
+            position: absolute;
+            right: 0;
+            animation: blink 1s infinite;
+        }
+
+        .section-title h2::before {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--gradient-accent);
+            border-radius: 2px;
+        }
+
+        .section-title p {
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .category-card {
+            background: rgba(30, 58, 138, 0.2);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: -1;
+        }
+
+        .category-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .category-card:hover::before {
+            opacity: 1;
+        }
+
+        .category-icon {
+            height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-icon::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-accent);
+            opacity: 0.8;
+            z-index: -1;
+        }
+
+        .category-content {
+            padding: 1.8rem;
+        }
+
+        .category-content h3 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .category-content p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 1.8rem;
+        }
+
+        .category-btn {
+            display: inline-block;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .category-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        /* Tools Section */
+        .tools {
+            padding: 5rem 0;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .tool-card {
+            background: rgba(30, 58, 138, 0.2);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.7s ease;
+        }
+
+        .tool-card:hover::before {
+            left: 100%;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .tool-header {
+            padding: 1.8rem;
+            background: var(--gradient);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .tool-header h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tool-body {
+            padding: 1.8rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .tool-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .tool-body::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .tool-body::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 10px;
+        }
+
+        .tool-link {
+            display: block;
+            margin-bottom: 1rem;
+            color: var(--cyan);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .tool-link::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            transition: all 0.3s ease;
+        }
+
+        .tool-link:hover {
+            color: var(--accent);
+            padding-left: 35px;
+        }
+
+        .tool-link:hover::before {
+            transform: translateX(5px);
+        }
+
+        .tool-link i {
+            margin-right: 10px;
+            color: var(--purple);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 5rem 0;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 2.5rem 2rem;
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.4s ease;
+            background: rgba(30, 58, 138, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient-accent);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .feature-icon {
+            width: 90px;
+            height: 90px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.8rem;
+            font-size: 2.2rem;
+            color: white;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(10deg);
+            background: var(--gradient-accent);
+        }
+
+        .feature-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(10, 17, 40, 0.9);
+            color: white;
+            padding: 4rem 0 2rem;
+            margin-top: 4rem;
+            position: relative;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-column h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 10px;
+            color: var(--cyan);
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--gradient-accent);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+        }
+        
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            nav ul {
+                gap: 1rem;
+            }
+            
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2.2rem;
+            }
+            
+            .category-grid, .tools-grid, .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-logo {
+                width: 140px;
+                height: 140px;
+            }
+            
+            .main-logo i {
+                font-size: 4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Enhanced Space Background -->
+    <div class="space-background" id="spaceBackground"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-search"></i>
+                <span>OSINT Hunter</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#categories">Categories</a></li>
+                    <li><a href="#tools">Tools</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#about">About</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+<section class="hero" id="home">
+    <div class="container hero-content">
+        <div class="logo-container fade-in">
+            <!-- Replace this div with your logo image -->
+            <img src="https://f.top4top.io/p_3600jj0cv1.png" alt="OSINT Hunter Logo" class="main-logo">
+        </div>
+        <h1 class="fade-in" id="typing-title"></h1>
+        <p class="fade-in delay-1">Your comprehensive resource for Open Source Intelligence gathering with hundreds of specialized tools</p>
+    </div>
+</section>
+
+    <!-- Tools Section -->
+    <section class="tools" id="tools">
+        <div class="container">
+            <div class="section-title">
+                <h2 id="tools-title"></h2>
+                <p>Hand-picked selection of essential OSINT resources</p>
+            </div>
+            <div class="tools-grid">
+                <!-- Search Engine Tools -->
+                <div class="tool-card fade-in">
+                    <div class="tool-header">
+                        <h3><i class="fas fa-search"></i> Search Engines</h3>
+                        <p>Advanced search techniques</p>
+                    </div>
+                    <div class="tool-body">
+                        <a href="https://www.google.com/advanced_search" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Google Advanced Search
+                        </a>
+                        <a href="https://yandex.com" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Yandex
+                        </a>
+                        <a href="https://www.baidu.com" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Baidu
+                        </a>
+                        <a href="https://help.duckduckgo.com/duckduckgo-help-pages/results/syntax" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> DuckDuckGo Search Guide
+                        </a>
+                        <a href="https://www.bing.com/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Bing Search Guide
+                        </a>
+                        <a href="https://www.yahoo.com/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Yahoo
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Image OSINT Tools -->
+                <div class="tool-card fade-in delay-1">
+                    <div class="tool-header">
+                        <h3><i class="fas fa-image"></i> Image Analysis</h3>
+                        <p>Reverse image search & analysis</p>
+                    </div>
+                    <div class="tool-body">
+                        <a href="https://images.google.com" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Google Image Search
+                        </a>
+                        <a href="https://yandex.com" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Yandex Images
+                        </a>
+                        <a href="https://tineye.com" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> TinEye
+                        </a>
+                        <a href="https://pimeyes.com/en" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> PimEyes Face Recognition
+                        </a>
+                        <a href="https://trends.google.com/trends/?geo=US" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Google Trends
+                        </a>
+                        <a href="https://www.bing.com/visualsearch" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Visual Search
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Email OSINT Tools -->
+                <div class="tool-card fade-in delay-2">
+                    <div class="tool-header">
+                        <h3><i class="fas fa-envelope"></i> Email Intelligence</h3>
+                        <p>Email discovery & verification</p>
+                    </div>
+                    <div class="tool-body">
+                        <a href="https://hunter.io" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Hunter.io
+                        </a>
+                        <a href="https://phonebook.cz" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Phonebook.cz
+                        </a>
+                        <a href="https://www.voilanorbert.com" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> VoilaNorbert
+                        </a>
+                        <a href="https://tools.verifyemailaddress.io" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Email Hippo
+                        </a>
+                        <a href="https://email-checker.net/validate" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Email Checker
+                        </a>
+                        <a href="https://haveibeenpwned.com/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Email Breach History
+                        </a>
+                        <a href="https://hunter.io/email-verifier" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Email Verifier
+                        </a>
+                        <a href="https://mxtoolbox.com/EmailHeaders.aspx" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Email Header Analyzer
+                        </a>
+                    </div>
+                </div>
+
+                <!-- People Search Tools -->
+                <div class="tool-card fade-in">
+                    <div class="tool-header">
+                        <h3><i class="fas fa-user-secret"></i> People Search</h3>
+                        <p>Personal information discovery</p>
+                    </div>
+                    <div class="tool-body">
+                        <a href="https://www.whitepages.com" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> WhitePages
+                        </a>
+                        <a href="https://www.truecaller.com" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> TrueCaller
+                        </a>
+                        <a href="https://www.spydialer.com/default.aspx" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> SpyDialer
+                        </a>
+                        <a href="https://www.blackbookonline.info/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Free Public Records
+                        </a>
+                        <a href="https://xlek.com/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Xlek
+                        </a>
+                        <a href="https://socialcatfish.com/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> SocialCatfish
+                        </a>
+                        <a href="https://www.twilio.com/en-us/user-authentication-identity/lookup" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Twilio Lookup
+                        </a>
+                        <a href="https://www.fonefinder.net/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Fone Finder
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Website OSINT Tools -->
+                <div class="tool-card fade-in delay-1">
+                    <div class="tool-header">
+                        <h3><i class="fas fa-globe"></i> Website OSINT</h3>
+                        <p>Domain & website analysis</p>
+                    </div>
+                    <div class="tool-body">
+                        <a href="https://builtwith.com" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> BuiltWith
+                        </a>
+                        <a href="https://centralops.net/co" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Domain Dossier
+                        </a>
+                        <a href="https://www.virustotal.com" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Virus Total
+                        </a>
+                        <a href="https://web.archive.org" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Wayback Machine
+                        </a>
+                        <a href="https://shodan.io" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Shodan
+                        </a>
+                        <a href="https://www.urlvoid.com/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> URLVoid
+                        </a>
+                        <a href="https://viewdns.info/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> ViewDNS.info
+                        </a>
+                        <a href="https://en.fofa.info/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> FOFA
+                        </a>
+                        <a href="https://www.robtex.com/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Robtex
+                        </a>
+                        <a href="https://iamshafayat.github.io/JSpider/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> JSpider
+                        </a>
+                        <a href="https://iamshafayat.github.io/ReconPro/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> ReconPro
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Social Media OSINT Tools -->
+                <div class="tool-card fade-in delay-2">
+                    <div class="tool-header">
+                        <h3><i class="fas fa-share-alt"></i> Social Media</h3>
+                        <p>Social platform intelligence</p>
+                    </div>
+                    <div class="tool-body">
+                        <a href="https://whatsmyname.app/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> WhatsMyName 
+                        </a>
+                        <a href="https://tinfoleak.com" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Tinfoleak
+                        </a>
+                        <a href="https://instantusername.com/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Instant Username
+                        </a>
+                        <a href="https://intelx.io/tools?tab=facebook" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> IntelligenceX Facebook
+                        </a>
+                        <a href="https://infospace.com/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> infospace
+                        </a>
+                        <a href="https://twitter.com/search-advanced" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Twitter Advanced Search
+                        </a>
+                        <a href="https://radaris.com/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Radaris
+                        </a>
+                        <a href="https://registry.thebump.com/babyregistrysearch" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Baby registry search
+                        </a>
+                        <a href="https://whopostedwhat.com/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Who Posted What?
+                        </a>
+                        <a href="https://www.twiangulate.com/search/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Twiangulate
+                        </a>
+                        <a href="https://www.idcrawl.com/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Idcrawl Search
+                        </a>
+                    </div>
+                </div>
+
+                <!-- IP & Network Tools -->
+                <div class="tool-card fade-in">
+                    <div class="tool-header">
+                        <h3><i class="fas fa-network-wired"></i> IP & Network</h3>
+                        <p>Network intelligence & analysis</p>
+                    </div>
+                    <div class="tool-body">
+                        <a href="https://www.whatismyip.com" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> WhatIsMyIP
+                        </a>
+                        <a href="https://www.ipvoid.com" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> IPVoid
+                        </a>
+                        <a href="https://mxtoolbox.com" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> MXToolbox
+                        </a>
+                        <a href="https://www.abuseipdb.com/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> AbuseIPDB
+                        </a>
+                        <a href="https://bgp.he.net" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> BGP Toolkit
+                        </a>
+                        <a href="https://iplocation.io/ip" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> IP Location
+                        </a>
+                        <a href="https://www.ipqualityscore.com/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> IPQualityScore
+                        </a>
+                        <a href="https://www.dnsleaktest.com/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> DNS Leak Test
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Public Records Tools -->
+                <div class="tool-card fade-in delay-1">
+                    <div class="tool-header">
+                        <h3><i class="fas fa-archive"></i> Public Records</h3>
+                        <p>Government & public data</p>
+                    </div>
+                    <div class="tool-body">
+                        <a href="https://www.opencorporates.com" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> OpenCorporates
+                        </a>
+                        <a href="https://www.aihitdata.com" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> AI HIT Data
+                        </a>
+                        <a href="https://www.voterrecords.com" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Voter Records
+                        </a>
+                        <a href="https://publicrecords.searchsystems.net/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Public records searchsystems
+                        </a>
+                        <a href="https://www.spokeo.com" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Spokeo
+                        </a>
+                        <a href="https://www.courtlistener.com/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> CourtListener
+                        </a>
+                        <a href="https://www.nsopw.gov/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> NSOPW
+                        </a>
+                        <a href="https://www.crimemapping.com/home" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Inmate Locator
+                        </a>
+                        <a href="https://www.findagrave.com/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Find a Grave
+                        </a>
+                    </div>
+                </div>
+
+                <!-- GitHub OSINT Tools -->
+                <div class="tool-card fade-in delay-2">
+                    <div class="tool-header">
+                        <h3><i class="fab fa-github"></i> GitHub OSINT Tools</h3>
+                        <p>Open source OSINT tools</p>
+                    </div>
+                    <div class="tool-body">
+                        <a href="https://github.com/sherlock-project/sherlock" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Sherlock Project
+                        </a>
+                        <a href="https://github.com/amitrajputfff/Profil3r" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Profil3r
+                        </a>
+                        <a href="https://github.com/megadose/holehe" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Holehe
+                        </a>
+                        <a href="https://github.com/soxoj/maigret/blob/main/README.md" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Maigret
+                        </a>
+                        <a href="https://github.com/moonD4rk/HackBrowserData" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Hack Browser Data
+                        </a>
+                        <a href="https://github.com/JoelGMSec/EvilnoVNC/blob/main/README.md" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> EvilnoVNC
+                        </a>
+                        <a href="https://github.com/humblelad/Shodan-Dorks" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Shodan Dorks
+                        </a>
+                        <a href="https://github.com/twelvesec/gasmask" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Gasmask
+                        </a>
+                        <a href="https://github.com/opsdisk/pagodo" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Pagodo
+                        </a>
+                        <a href="https://github.com/mxrch/GHunt.git" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> GHunt
+                        </a>
+                        <a href="https://github.com/thenurhabib/collector" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Collector
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Geolocation Tools / Maps -->
+                <div class="tool-card fade-in delay-2">
+                    <div class="tool-header">
+                        <h3><i class="fas fa-map-marker-alt"></i> Geolocation Tools / Maps</h3>
+                        <p>Map & Earth</p>
+                    </div>
+                    <div class="tool-body">
+                        <a href="https://nova.astrometry.net/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Astrometry
+                        </a>
+                        <a href="https://suncalc.net/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Suncalc
+                        </a>
+                        <a href="https://www.google.com/maps/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Google Maps
+                        </a>
+                        <a href="https://www.bing.com/maps" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Bing Map
+                        </a>
+                        <a href="https://maps.here.com/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> HERE Maps
+                        </a>
+                        <a href="https://data.mashedworld.com/dualmaps/map.htm" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Dual Maps
+                        </a>
+                        <a href="https://www.instantstreetview.com/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Instant Google Street View
+                        </a>
+                        <a href="https://wikimapia.org/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Wikimapia
+                        </a>
+                        <a href="https://www.openstreetmap.org/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> OpenStreetMap
+                        </a>
+                        <a href="https://zoom.earth/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Flash Earth
+                        </a>
+                        <a href="https://yandex.com/maps" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Yandex Maps
+                        </a>
+                        <a href="https://earth.google.com/web/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Google Earth Overlays
+                        </a>
+                        <a href="https://map.kakao.com/" class="tool-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Daum (Korean)
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- More Tools -->
+                <div class="tool-card fade-in delay-2">
+                    <div class="tool-header">
+                        <h3><i class="fas fa-globe"></i> More Tools Coming soon..</h3>
+                        <p>Open source OSINT tools</p>
+                    </div>
+                    <div class="tool-body">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Why Choose OSINT Hunter?</h2>
+                <p>Our platform offers unique advantages for OSINT professionals</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-th-large"></i>
+                    </div>
+                    <h3>Organized Categories</h3>
+                    <p>Tools neatly categorized by function for easy navigation and discovery.</p>
+                </div>
+                <div class="feature-card fade-in delay-1">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Quick Access</h3>
+                    <p>Direct links to tools with no redirects or unnecessary steps.</p>
+                </div>
+                <div class="feature-card fade-in delay-2">
+                    <div class="feature-icon">
+                        <i class="fas fa-sync"></i>
+                    </div>
+                    <h3>Regular Updates</h3>
+                    <p>Our database is constantly updated with new tools and resources.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Mobile Friendly</h3>
+                    <p>Access our tools on any device with our responsive design.</p>
+                </div>
+                <div class="feature-card fade-in delay-1">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Privacy Focused</h3>
+                    <p>We respect your privacy and don't track your searches.</p>
+                </div>
+                <div class="feature-card fade-in delay-2">
+                    <div class="feature-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Learning Resources</h3>
+                    <p>Tutorials and guides to help you master OSINT techniques.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>OSINT Hunter</h3>
+                    <p>Your comprehensive toolkit for open source intelligence gathering. We provide organized access to hundreds of specialized tools for digital investigations.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="https://www.piratesofthedeadflag.com">Go Pirates of the Dead Flag</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>OSINT Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">OSINT Framework</a></li>
+                        <li><a href="#">Beginner's Guide</a></li>
+                        <li><a href="#">Advanced Techniques</a></li>
+                        <li><a href="#">Privacy Tips</a></li>
+                        <li><a href="#">Legal Considerations</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Submit a Tool</a></li>
+                        <li><a href="https://facebook.com/PiratesoftheDeadFlag">Facebook</a></li>
+                        <li><a href="https://discord.gg/m5vf4NNq">Discord</a></li>
+                        <li><a href="https://github.com/PiratesoftheDeadFlag">GitHub</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 OSINT Hunter. All rights reserved. | Made By Alfaz Hossain ☠️</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Create enhanced space background
+        function createSpaceBackground() {
+            const spaceBackground = document.getElementById('spaceBackground');
+            const starCount = 300;
+            
+            // Create stars
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                // Random position
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                
+                // Random size
+                const size = Math.random() * 3;
+                
+                // Random animation delay
+                const delay = Math.random() * 5;
+                
+                star.style.left = `${x}%`;
+                star.style.top = `${y}%`;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.animationDelay = `${delay}s`;
+                
+                spaceBackground.appendChild(star);
+            }
+            
+            // Create comets
+            for (let i = 0; i < 5; i++) {
+                const comet = document.createElement('div');
+                comet.classList.add('comet');
+                
+                // Random position
+                const x = Math.random() * 100 + 50;
+                const y = Math.random() * 50;
+                
+                // Random animation delay
+                const delay = Math.random() * 15;
+                
+                comet.style.left = `${x}%`;
+                comet.style.top = `${y}%`;
+                comet.style.animationDelay = `${delay}s`;
+                
+                spaceBackground.appendChild(comet);
+            }
+            
+            // Create nebulas
+            for (let i = 0; i < 3; i++) {
+                const nebula = document.createElement('div');
+                nebula.classList.add('nebula');
+                
+                // Random position
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                
+                // Random size
+                const size = 200 + Math.random() * 200;
+                
+                nebula.style.left = `${x}%`;
+                nebula.style.top = `${y}%`;
+                nebula.style.width = `${size}px`;
+                nebula.style.height = `${size}px`;
+                nebula.style.animationDelay = `${Math.random() * 10}s`;
+                
+                spaceBackground.appendChild(nebula);
+            }
+        }
+
+        // Text typing animation
+        function typeText(element, text, speed = 100) {
+            let i = 0;
+            element.innerHTML = '';
+            
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            
+            type();
+        }
+
+        // Simple animation on scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            createSpaceBackground();
+            
+            // Start typing animations after a short delay
+            setTimeout(() => {
+                typeText(document.getElementById('typing-title'), 'Ultimate OSINT Toolkit');
+            }, 500);
+            
+            setTimeout(() => {
+                typeText(document.getElementById('tools-title'), 'Complete OSINT Tools Collection');
+            }, 1500);
+            
+            const fadeElements = document.querySelectorAll('.fade-in');
+            
+            const fadeInOnScroll = function() {
+                fadeElements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    const elementVisible = 150;
+                    
+                    if (elementTop < window.innerHeight - elementVisible) {
+                        element.style.opacity = "1";
+                        element.style.transform = "translateY(0)";
+                    }
+                });
+            };
+            
+            // Set initial state
+            fadeElements.forEach(element => {
+                element.style.opacity = "0";
+                element.style.transform = "translateY(30px)";
+                element.style.transition = "opacity 0.8s ease, transform 0.8s ease";
+            });
+            
+            window.addEventListener('scroll', fadeInOnScroll);
+            fadeInOnScroll(); // Check on load
+        });
+    </script>
+</body>
+</html>
